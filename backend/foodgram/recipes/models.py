@@ -21,6 +21,9 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Списки покупок'
         ordering = ['id']
 
+    def __str__(self) -> str:
+        return ' / '.join(i.name for i in self.recipe.all())
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -39,6 +42,9 @@ class Favorite(models.Model):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return ' / '.join(i.name for i in self.recipe.all())
 
 
 class Subscription(models.Model):
@@ -59,6 +65,9 @@ class Subscription(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return self.user.username + ' подписался на ' + self.author.username
 
 
 class Recipe(models.Model):
@@ -84,7 +93,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         verbose_name='Картинка рецепта',
-        upload_to='media/recipe/'
+        upload_to='media/recipes/images/'
     )
     text = models.TextField(
         verbose_name='Текст рецепта'
@@ -97,6 +106,9 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Ingredient(models.Model):
@@ -113,6 +125,9 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return self.name + ', ' + self.measurement_unit
 
 
 class Tag(models.Model):
@@ -136,3 +151,6 @@ class Tag(models.Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return self.name
