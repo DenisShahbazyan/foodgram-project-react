@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from users.models import User
 from recipes.models import Subscription
+from users.models import User
 
 
-class UserListAndRegistrationSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     is_subscribed = serializers.SerializerMethodField()
 
@@ -16,8 +16,8 @@ class UserListAndRegistrationSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         if self.context['request'].user.is_anonymous:
             return False
-        user = self.context['request'].user  # кто делает запрос
-        author = obj  # кто в выводе
+        user = self.context['request'].user
+        author = obj
         query = Subscription.objects.filter(user=author, author=user)
         if query:
             return True
@@ -30,6 +30,19 @@ class UserListAndRegistrationSerializer(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             del self.fields['is_subscribed']
         return data
+
+
+class UserSetPasswordSerializer(serializers.ModelSerializer):
+    new_password = serializers.CharField(
+        required=True
+    )
+    current_password = serializers.CharField(
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('new_password', 'current_password')
 
 
 class GetTokenSerializer(serializers.Serializer):
