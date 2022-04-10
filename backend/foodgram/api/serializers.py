@@ -16,15 +16,12 @@ class UserListAndRegistrationSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         if self.context['request'].user.is_anonymous:
             return False
-        i_am = self.context['request'].user
-        author = obj
-
-        print(i_am, '=', author)
-
-        q = Subscription.objects.get(author=i_am)
-        # Найти через User текущего пользователя, кто делает запрос
-        # и через related_name обратиться к Subscription
-        print(q)
+        user = self.context['request'].user  # кто делает запрос
+        author = obj  # кто в выводе
+        query = Subscription.objects.filter(user=author, author=user)
+        if query:
+            return True
+        return False
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)

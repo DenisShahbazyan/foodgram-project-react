@@ -26,7 +26,7 @@ def get_token(request):
     if auth:
         jwt_token = AccessToken.for_user(user)
         return Response(
-            f'Access Token: {str(jwt_token)}',
+            {'auth_token': str(jwt_token)},
             status=status.HTTP_200_OK
         )
     return Response(
