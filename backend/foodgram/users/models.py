@@ -2,17 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class UserRole:
-    USER = 'user'
-    ADMIN = 'admin'
-
-
-CHOICES_ROLE = (
-    (UserRole.USER, 'user'),
-    (UserRole.ADMIN, 'admin'),
-)
-
-
 class User(AbstractUser):
     username = models.CharField(
         verbose_name='Имя пользователя',
@@ -32,16 +21,6 @@ class User(AbstractUser):
         verbose_name='Фамилия',
         max_length=150
     )
-    role = models.CharField(
-        verbose_name='Роль',
-        max_length=16,
-        choices=CHOICES_ROLE,
-        default='user'
-    )
-
-    @property
-    def is_admin(self):
-        return self.role == UserRole.ADMIN
 
     class Meta:
         verbose_name = 'Пользователь'
