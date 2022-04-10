@@ -66,8 +66,8 @@ class Subscription(models.Model):
         verbose_name_plural = 'Подписки'
         ordering = ['id']
 
-    def __str__(self) -> str:
-        return self.user.username + ' подписался на ' + self.author.username
+    # def __str__(self) -> str:
+    #     return self.user.username + ' подписался на ' + self.author.username
 
 
 class Recipe(models.Model):
