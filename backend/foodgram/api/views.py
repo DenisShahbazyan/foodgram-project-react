@@ -4,7 +4,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.authtoken.models import Token
 
 from users.models import User
 from .serializers import (GetTokenSerializer, UserSerializer,
@@ -61,9 +61,9 @@ def get_token(request):
     user = get_object_or_404(User, email=email)
     auth = authenticate(username=user, password=password)
     if auth:
-        jwt_token = AccessToken.for_user(user)
+        token, _ = Token.objects.get_or_create(user=user)
         return Response(
-            {'auth_token': str(jwt_token)},
+            {'auth_token': str(token)},
             status=status.HTTP_200_OK
         )
     return Response(
