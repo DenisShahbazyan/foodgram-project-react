@@ -8,7 +8,9 @@ from rest_framework.authtoken.models import Token
 
 from users.models import User
 from .serializers import (GetTokenSerializer, UserSerializer,
-                          UserSetPasswordSerializer)
+                          UserSetPasswordSerializer, TagSerializer,
+                          IngredientSerializer, RecipeSerializer)
+from recipes.models import Tag, Ingredient, Recipe
 
 
 class ListCreateRetrieveViewSet(mixins.ListModelMixin,
@@ -70,3 +72,18 @@ def get_token(request):
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
