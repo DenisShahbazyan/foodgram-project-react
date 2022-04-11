@@ -1,10 +1,11 @@
+from enum import auto
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Subscription, Tag, Ingredient, Recipe, AmountIngredientForRecipe
+from recipes.models import (
+    Subscription, Tag, Ingredient, Recipe, AmountIngredientForRecipe)
 from users.models import User
-
-import base64
-from django.core.files.base import ContentFile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -80,32 +81,10 @@ class AmountIngredientForRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class Base64ImageField(serializers.Field):
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-
-            print('===========')
-            print('format = ', format)
-            print('imgstr = ', imgstr)
-            print('ext = ', ext)
-            print('data = ', data)
-            print('===========')
-
-        except ValueError:
-            raise serializers.ValidationError('Ошибка!!!')
-        return data
-
-
 class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = TagSerializer(read_only=True, many=True)
+    tags = TagSerializer(many=True)
     author = UserSerializer(read_only=True)
     ingredients = AmountIngredientForRecipeSerializer(
         source="amountingredientforrecipe", many=True)
@@ -129,10 +108,39 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         return False
 
 
-# TODO Для запросов POST PATH DELETE к рецептам
-class CreateUpdateDestroyRecipeSerializer(serializers.ModelField):
+class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    image = Base64ImageField()
+
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time')
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'name', 'image', 'text', 'cooking_time')
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        tags_data = validated_data.pop('tags')
+        tags = []
+        for id in tags_data:
+            tag = get_object_or_404(Tag, id=id)
+            tags.append(tag)
+
+        ingredients_data = validated_data.pop('ingredients')
+        ingredients = []
+        recipe = Recipe(author=user, **validated_data)
+        recipe.save()
+        for field in ingredients_data:
+            ingredient = get_object_or_404(Ingredient, id=field['id'])
+            AmountIngredientForRecipe.objects.create(
+                recipe=recipe, ingredient=ingredient, amount=field['amount']
+            )
+            ingredients.append(ingredient)
+
+        recipe.tags.add(*tags)
+        recipe.ingredients.add(*ingredients)
+        return recipe
