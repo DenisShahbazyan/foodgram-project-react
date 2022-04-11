@@ -3,6 +3,9 @@ from rest_framework import serializers
 from recipes.models import Subscription, Tag, Ingredient, Recipe, AmountIngredientForRecipe
 from users.models import User
 
+import base64
+from django.core.files.base import ContentFile
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -77,7 +80,29 @@ class AmountIngredientForRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class Base64ImageField(serializers.Field):
+    def to_representation(self, value):
+        return value
+
+    def to_internal_value(self, data):
+        try:
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+            print('===========')
+            print('format = ', format)
+            print('imgstr = ', imgstr)
+            print('ext = ', ext)
+            print('data = ', data)
+            print('===========')
+
+        except ValueError:
+            raise serializers.ValidationError('Ошибка!!!')
+        return data
+
+
+class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(read_only=True, many=True)
@@ -91,15 +116,23 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'is_in_shopping_cart', 'name', 'image', 'text',
                   'cooking_time')
 
+    # TODO доделать для авторизованного пользователя
     def get_is_favorited(self, obj):
         if self.context['request'].user.is_anonymous:
             return False
+        return False
 
+    # TODO доделать для авторизованного пользователя
     def get_is_in_shopping_cart(self, obj):
         if self.context['request'].user.is_anonymous:
             return False
+        return False
 
-    # def validate(self, data):
-    #     if self.context['request'].method == 'PUT':
-    #         raise serializers.ValidationError('Запрос PUT запрещен!')
-    #     return data
+
+# TODO Для запросов POST PATH DELETE к рецептам
+class CreateUpdateDestroyRecipeSerializer(serializers.ModelField):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
+                  'is_in_shopping_cart', 'name', 'image', 'text',
+                  'cooking_time')
