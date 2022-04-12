@@ -1,4 +1,5 @@
 from enum import auto
+from multiprocessing import AuthenticationError
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
@@ -107,19 +108,52 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
             return False
         return False
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        tags_data = validated_data.pop('tags')
+        tags = []
+        for id in tags_data:
+            tag = get_object_or_404(Tag, id=id)
+            tags.append(tag)
+
+        ingredients_data = validated_data.pop('ingredients')
+        ingredients = []
+        recipe = Recipe(author=user, **validated_data)
+        recipe.save()
+        for field in ingredients_data:
+            ingredient = get_object_or_404(Ingredient, id=field['id'])
+            AmountIngredientForRecipe.objects.create(
+                recipe=recipe, ingredient=ingredient, amount=field['amount']
+            )
+            ingredients.append(ingredient)
+
+        recipe.tags.add(*tags)
+        recipe.ingredients.add(*ingredients)
+        return recipe
+
+
+class AmountWriteSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
 
 class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+    author = UserSerializer(read_only=True)
+    ingredients = AmountWriteSerializer(many=True)
+    tags = serializers.ListField()
     image = Base64ImageField()
+    name = serializers.CharField(max_length=200)
+    text = serializers.CharField()
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients',
                   'name', 'image', 'text', 'cooking_time')
+
+    def to_representation(self, instance):
+        return ListRetrieveRecipeSerializer(instance, context=self.context).data
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -141,6 +175,8 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
             )
             ingredients.append(ingredient)
 
+        print(tags)
+        print(*tags)
         recipe.tags.add(*tags)
         recipe.ingredients.add(*ingredients)
         return recipe

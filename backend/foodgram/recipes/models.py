@@ -180,5 +180,5 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
         ordering = ['id']
 
-    def __str__(self) -> str:
-        return self.name
+    # def __str__(self) -> str:
+    #     return self.name
