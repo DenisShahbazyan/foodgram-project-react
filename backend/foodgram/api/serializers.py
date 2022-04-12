@@ -175,8 +175,25 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
             )
             ingredients.append(ingredient)
 
-        print(tags)
-        print(*tags)
         recipe.tags.add(*tags)
         recipe.ingredients.add(*ingredients)
         return recipe
+
+    def update(self, instance, validated_data):
+        from pprint import pprint
+        print('=' * 20)
+        pprint(f'instance = {instance.__dict__}')
+        print('=' * 20)
+        pprint(f'validated_data = {validated_data}')
+        print('=' * 20)
+        validated_data.get('tags')
+        print('=' * 20)
+
+        # instance.ingredients.set(validated_data.get('ingredients'))
+        instance.tags.set(validated_data.get('tags'))
+        instance.image = validated_data.get('image')
+        instance.name = validated_data.get('name')
+        instance.text = validated_data.get('text')
+        instance.cooking_time = validated_data.get('cooking_time')
+        instance.save()
+        return instance
