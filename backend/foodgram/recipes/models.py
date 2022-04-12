@@ -126,8 +126,8 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
         ordering = ['id']
 
-    def __str__(self) -> str:
-        return self.name + ', ' + self.measurement_unit
+    # def __str__(self) -> str:
+    #     return self.name + ', ' + self.measurement_unit
 
 
 class AmountIngredientForRecipe(models.Model):

@@ -153,7 +153,8 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time')
 
     def to_representation(self, instance):
-        return ListRetrieveRecipeSerializer(instance, context=self.context).data
+        return ListRetrieveRecipeSerializer(instance,
+                                            context=self.context).data
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -180,16 +181,19 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        from pprint import pprint
-        print('=' * 20)
-        pprint(f'instance = {instance.__dict__}')
-        print('=' * 20)
-        pprint(f'validated_data = {validated_data}')
-        print('=' * 20)
-        validated_data.get('tags')
-        print('=' * 20)
+        ingredients_data = validated_data.get("ingredients")
+        ingredients = []
+        for field in ingredients_data:
+            ingredient = get_object_or_404(Ingredient, id=field['id'])
+            AmountIngredientForRecipe.objects.filter(
+                recipe=instance
+            ).update_or_create(
+                recipe=instance, ingredient=ingredient,
+                amount=field['amount']
+            )
+            ingredients.append(ingredient)
 
-        # instance.ingredients.set(validated_data.get('ingredients'))
+        instance.ingredients.set(ingredients)
         instance.tags.set(validated_data.get('tags'))
         instance.image = validated_data.get('image')
         instance.name = validated_data.get('name')

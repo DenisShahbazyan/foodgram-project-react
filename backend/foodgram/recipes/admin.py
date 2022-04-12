@@ -35,6 +35,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     list_filter = ('name',)
     list_editable = ('name', 'measurement_unit')
+    search_fields = ('id', )
 
 
 @admin.register(AmountIngredientForRecipe)
