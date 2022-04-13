@@ -1,18 +1,19 @@
 from django.contrib.auth import authenticate
 from rest_framework import mixins, status, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action, api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 
+from recipes.models import Ingredient, Recipe, Subscription, Tag
 from users.models import User
-from .serializers import (GetTokenSerializer, UserSerializer,
-                          UserSetPasswordSerializer, TagSerializer,
-                          IngredientSerializer, ListRetrieveRecipeSerializer,
-                          CreateUpdateDestroyRecipeSerializer,
-                          SubscriptionSerializer, SubscribeSerializer)
-from recipes.models import Tag, Ingredient, Recipe, Subscription
+
+from .serializers import (CreateUpdateDestroyRecipeSerializer,
+                          GetTokenSerializer, IngredientSerializer,
+                          ListRetrieveRecipeSerializer, SubscribeSerializer,
+                          SubscriptionSerializer, TagSerializer,
+                          UserSerializer, UserSetPasswordSerializer)
 
 
 class ListCreateRetrieveViewSet(mixins.ListModelMixin,

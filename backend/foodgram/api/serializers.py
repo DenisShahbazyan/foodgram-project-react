@@ -1,13 +1,9 @@
-from enum import auto
-from itertools import count
-from multiprocessing import AuthenticationError
-from pyexpat import model
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
-from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import (
-    Subscription, Tag, Ingredient, Recipe, AmountIngredientForRecipe)
+from recipes.models import (AmountIngredientForRecipe, Ingredient, Recipe,
+                            Subscription, Tag)
 from users.models import User
 
 
@@ -90,7 +86,7 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = UserSerializer(read_only=True)
     ingredients = AmountIngredientForRecipeSerializer(
-        source="amountingredientforrecipe", many=True)
+        source='amountingredientforrecipe', many=True)
 
     class Meta:
         model = Recipe
@@ -236,9 +232,15 @@ class CurrentAuthorDefault:
 class SubscribeSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     author = serializers.HiddenField(default=CurrentAuthorDefault())
+    email = serializers.ReadOnlyField(source='author.email')
+    id = serializers.ReadOnlyField(source='author.id')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
+    # is_subscribed = serializers.ReadOnlyField(source='get_is_subscribed')
 
     class Meta:
         model = Subscription
-        # fields = ('email', 'id', 'username', 'first_name', 'last_name',
-        #           'is_subscribed', 'recipes', 'recipes_count')
-        fields = ('user', 'author')
+        # fields = ('is_subscribed', 'recipes', 'recipes_count')
+        fields = ('user', 'author', 'email', 'id', 'username', 'first_name',
+                  'last_name')
