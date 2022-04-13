@@ -10,8 +10,9 @@ from users.models import User
 from .serializers import (GetTokenSerializer, UserSerializer,
                           UserSetPasswordSerializer, TagSerializer,
                           IngredientSerializer, ListRetrieveRecipeSerializer,
-                          CreateUpdateDestroyRecipeSerializer)
-from recipes.models import Tag, Ingredient, Recipe
+                          CreateUpdateDestroyRecipeSerializer,
+                          SubscriptionSerializer, SubscribeSerializer)
+from recipes.models import Tag, Ingredient, Recipe, Subscription
 
 
 class ListCreateRetrieveViewSet(mixins.ListModelMixin,
@@ -93,3 +94,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'retrieve':
             return ListRetrieveRecipeSerializer
         return CreateUpdateDestroyRecipeSerializer
+
+
+class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = SubscriptionSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = User.objects.filter(followings__user=user)
+        return queryset
+
+
+class SubscribeViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscribeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

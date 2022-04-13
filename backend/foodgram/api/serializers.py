@@ -1,5 +1,7 @@
 from enum import auto
+from itertools import count
 from multiprocessing import AuthenticationError
+from pyexpat import model
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
@@ -23,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         user = self.context['request'].user
         author = obj
-        query = Subscription.objects.filter(user=author, author=user)
+        query = Subscription.objects.filter(user=user, author=author)
         if query:
             return True
         return False
@@ -201,3 +203,43 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
         instance.cooking_time = validated_data.get('cooking_time')
         instance.save()
         return instance
+
+
+class SimpleRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class SubscriptionSerializer(UserSerializer):
+    recipes = SimpleRecipeSerializer(many=True)
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
+
+
+class CurrentAuthorDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        author_id = serializer_field.context['request'].parser_context[
+            'kwargs']['author_id']
+        return get_object_or_404(User, id=author_id)
+
+
+class SubscribeSerializer(SubscriptionSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    author = serializers.HiddenField(default=CurrentAuthorDefault())
+    email = UserSerializer(required=False)
+
+    class Meta:
+        model = Subscription
+        # fields = ('email', 'id', 'username', 'first_name', 'last_name',
+        #           'is_subscribed', 'recipes', 'recipes_count')
+        fields = ('user', 'author', 'email')

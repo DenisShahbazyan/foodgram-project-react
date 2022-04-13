@@ -1,17 +1,23 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import (UserViewSet, get_token, TagViewSet,
-                    IngredientViewSet, RecipeViewSet)
+from .views import (UserViewSet, get_token, TagViewSet, IngredientViewSet,
+                    RecipeViewSet, SubscriptionViewSet, SubscribeViewSet)
 
 app_name = 'api'
 
 router = routers.DefaultRouter()
 
+router.register('users/subscriptions',
+                SubscriptionViewSet,
+                basename='subscription')
 router.register('users', UserViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientViewSet)
 router.register('recipes', RecipeViewSet)
+router.register(r'users/(?P<author_id>[\d]+)/subscribe',
+                SubscribeViewSet,
+                basename='subscribe',)
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -67,7 +67,7 @@ class Subscription(models.Model):
         ordering = ['id']
 
     # def __str__(self) -> str:
-    #     return self.user.username + ' подписался на ' + self.author.username
+    #     return self.user.username + ' подписан на ' + self.author.username
 
 
 class Recipe(models.Model):
