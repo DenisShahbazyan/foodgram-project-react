@@ -233,13 +233,12 @@ class CurrentAuthorDefault:
         return get_object_or_404(User, id=author_id)
 
 
-class SubscribeSerializer(SubscriptionSerializer):
+class SubscribeSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     author = serializers.HiddenField(default=CurrentAuthorDefault())
-    email = UserSerializer(required=False)
 
     class Meta:
         model = Subscription
         # fields = ('email', 'id', 'username', 'first_name', 'last_name',
         #           'is_subscribed', 'recipes', 'recipes_count')
-        fields = ('user', 'author', 'email')
+        fields = ('user', 'author')
