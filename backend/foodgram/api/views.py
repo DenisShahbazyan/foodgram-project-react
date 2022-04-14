@@ -45,7 +45,9 @@ class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return queryset
 
 
-class SubscribeViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class SubscribeViewSet(mixins.CreateModelMixin,
+                       mixins.DestroyModelMixin,
+                       viewsets.GenericViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscribeSerializer
 
