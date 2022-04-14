@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (IngredientViewSet, RecipeViewSet, SubscribeViewSet,
-                    SubscriptionViewSet, TagViewSet, UserViewSet, get_token)
+                    SubscriptionViewSet, TagViewSet, UserViewSet)
 
 app_name = 'api'
 
@@ -21,6 +21,5 @@ router.register(r'users/(?P<author_id>[\d]+)/subscribe',
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/token/login/', get_token, name='get_token'),
     path('auth/', include('djoser.urls.authtoken')),
 ]

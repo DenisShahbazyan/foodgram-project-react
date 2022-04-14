@@ -1,60 +1,36 @@
+from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
 from recipes.models import (AmountIngredientForRecipe, Ingredient, Recipe,
                             Subscription, Tag)
-from users.models import User
+
+User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+class UserCreateSerializer(UserCreateSerializer):
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'password', 'username', 'first_name',
+                  'last_name')
+
+
+class UserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'password', 'is_subscribed')
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed')
 
     def get_is_subscribed(self, obj):
-        if self.context['request'].user.is_anonymous:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
-        user = self.context['request'].user
-        author = obj
-        query = Subscription.objects.filter(user=user, author=author)
-        if query:
-            return True
-        return False
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
-    def validate(self, data):
-        if self.context['request'].method == 'POST':
-            del self.fields['is_subscribed']
-        return data
-
-
-class UserSetPasswordSerializer(serializers.ModelSerializer):
-    new_password = serializers.CharField(
-        required=True
-    )
-    current_password = serializers.CharField(
-        required=True
-    )
-
-    class Meta:
-        model = User
-        fields = ('new_password', 'current_password')
-
-
-class GetTokenSerializer(serializers.Serializer):
-    password = serializers.CharField(
-        required=True
-    )
-    email = serializers.CharField(
-        required=True
-    )
+        return Subscription.objects.filter(user=user, author=obj.id).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
