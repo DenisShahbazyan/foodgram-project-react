@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser import serializers as djoser_serializers
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
@@ -10,7 +10,7 @@ from recipes.models import (AmountIngredientForRecipe, Ingredient, Recipe,
 User = get_user_model()
 
 
-class UserCreateSerializer(UserCreateSerializer):
+class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
 
     class Meta:
         model = User
@@ -18,7 +18,7 @@ class UserCreateSerializer(UserCreateSerializer):
                   'last_name')
 
 
-class UserSerializer(UserSerializer):
+class UserSerializer(djoser_serializers.UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
