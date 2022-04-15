@@ -24,6 +24,10 @@ class ShoppingCart(models.Model):
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_cart')
+        ]
 
     # def __str__(self) -> str:
     #     return ' / '.join(i.name for i in self.recipe.all())
@@ -47,6 +51,10 @@ class Favorite(models.Model):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_favorite')
+        ]
 
     # def __str__(self) -> str:
     #     return ' / '.join(i.name for i in self.recipe.all())
