@@ -1,4 +1,3 @@
-from urllib import response
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
@@ -7,11 +6,12 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import Ingredient, Recipe, Subscription, Tag, Favorite
-
+from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
+                            Subscription, Tag)
 from .serializers import (CreateUpdateDestroyRecipeSerializer,
                           IngredientSerializer, ListRetrieveRecipeSerializer,
-                          SubscriptionSerializer, TagSerializer, SimpleRecipeSerializer)
+                          SimpleRecipeSerializer, SubscriptionSerializer,
+                          TagSerializer)
 
 User = get_user_model()
 
@@ -93,7 +93,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user,
             recipe=recipe)
         if not created:
-            return Response({'errors': 'Рецепт уже добавлен в избранное'},
+            return Response({'errors': 'Рецепт уже добавлен'},
                             status=status.HTTP_400_BAD_REQUEST)
         serializer = SimpleRecipeSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -102,6 +102,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def del_favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
         obj = Favorite.objects.filter(user=request.user, recipe=recipe)
+        if obj.exists():
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'errors': 'Рецепт уже удален'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=('post',), url_path='shopping_cart',
+            permission_classes=[IsAuthenticated])
+    def shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        _, created = ShoppingCart.objects.get_or_create(
+            user=request.user,
+            recipe=recipe)
+        if not created:
+            return Response({'errors': 'Рецепт уже добавлен'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = SimpleRecipeSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @shopping_cart.mapping.delete
+    def del_shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        obj = ShoppingCart.objects.filter(user=request.user, recipe=recipe)
         if obj.exists():
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
