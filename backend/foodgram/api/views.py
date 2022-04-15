@@ -130,3 +130,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({'errors': 'Рецепт уже удален'},
                         status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=('get',), url_path='download_shopping_cart',
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        return Response({'message': 'Файл скачан!'})
