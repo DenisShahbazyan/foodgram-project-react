@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
-    """Сериализатор для создания новго пользователя.
+    """Сериализатор для создания новго пользователя. Модель User.
     """
 
     class Meta:

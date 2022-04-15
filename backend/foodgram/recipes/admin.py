@@ -6,14 +6,14 @@ from .models import (AmountIngredientForRecipe, Favorite, Ingredient, Recipe,
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user')
-    filter_horizontal = ('recipe',)
+    list_display = ('id', 'user', 'recipe')
+    list_editable = ('user', 'recipe')
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user')
-    filter_horizontal = ('recipe',)
+    list_display = ('id', 'user', 'recipe')
+    list_editable = ('user', 'recipe')
 
 
 @admin.register(Subscription)

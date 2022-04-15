@@ -1,3 +1,4 @@
+from pprint import pprint
 from django.urls import include, path
 from rest_framework import routers
 
@@ -11,6 +12,10 @@ router.register('users', UserViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientViewSet)
 router.register('recipes', RecipeViewSet)
+
+# print('='*20)
+# pprint(router.urls)
+# print('='*20)
 
 urlpatterns = [
     path('', include(router.urls)),
