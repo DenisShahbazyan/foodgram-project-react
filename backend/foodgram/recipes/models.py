@@ -1,6 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.core import validators
+from django.db.models import F, Q
 
-from users.models import User
+User = get_user_model()
 
 
 class ShoppingCart(models.Model):
@@ -65,9 +68,15 @@ class Subscription(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_follow'),
+            models.CheckConstraint(
+                check=~Q(user=F('author')), name='user_not_author')
+        ]
 
-    # def __str__(self) -> str:
-    #     return self.user.username + ' подписан на ' + self.author.username
+    def __str__(self) -> str:
+        return f'Подписчик {self.user.username}, Автор {self.author.username}'
 
 
 class Recipe(models.Model):
@@ -99,6 +108,9 @@ class Recipe(models.Model):
         verbose_name='Текст рецепта'
     )
     cooking_time = models.IntegerField(
+        validators=(
+            validators.MinValueValidator(
+                1, message='Минимальное время приготовления 1 минута'),),
         verbose_name='Время приготовления'
     )
 
@@ -125,9 +137,13 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'], name='unique_ingredient')
+        ]
 
-    # def __str__(self) -> str:
-    #     return self.name + ', ' + self.measurement_unit
+    def __str__(self) -> str:
+        return self.name
 
 
 class AmountIngredientForRecipe(models.Model):
@@ -144,7 +160,9 @@ class AmountIngredientForRecipe(models.Model):
         verbose_name='ID ингредиента'
     )
     amount = models.IntegerField(
-        blank=True,
+        validators=(
+            validators.MinValueValidator(
+                1, message='Минимальное количество ингридиентов 1'),),
         verbose_name='Количество ингредиента'
     )
 
@@ -152,6 +170,11 @@ class AmountIngredientForRecipe(models.Model):
         verbose_name = 'Количество ингредиента для рецепта'
         verbose_name_plural = 'Количество ингредиента для рецепта'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient')
+        ]
 
     def __str__(self) -> str:
         return (self.recipe.name + ' | ' + self.ingredient.name + ' | ' +
@@ -180,5 +203,5 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
         ordering = ['id']
 
-    # def __str__(self) -> str:
-    #     return self.name
+    def __str__(self) -> str:
+        return self.name
