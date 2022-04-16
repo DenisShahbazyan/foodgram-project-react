@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.http.response import HttpResponse
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -134,4 +135,34 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=('get',), url_path='download_shopping_cart',
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        return Response({'message': 'Файл скачан!'})
+        carts = ShoppingCart.objects.filter(user=request.user)
+        tmp = {}
+        for cart in carts:
+            items = cart.recipe.amountingredientforrecipe.all()
+            for item in items:
+                ingredient = item.ingredient.name
+                amount = item.amount
+                measurement_unit = item.ingredient.measurement_unit
+                if f'{ingredient}|{measurement_unit}' not in tmp:
+                    tmp[f'{ingredient}|{measurement_unit}'] = {
+                        'amount': amount
+                    }
+                else:
+                    tmp[f'{ingredient}|{measurement_unit}']['amount'] = (
+                        tmp[f'{ingredient}|{measurement_unit}']['amount'] +
+                        amount
+                    )
+
+        shopping_list = []
+        for item in tmp:
+            ingredient = item.split('|')[0]
+            amount = tmp[item]["amount"]
+            measurement_unit = item.split('|')[1]
+            shopping_list.append(
+                f'{ingredient} - {amount}, {measurement_unit}\n'
+            )
+        response = HttpResponse(shopping_list, 'Content-Type: text/plain')
+        response['Content-Disposition'] = (
+            'attachment;' 'filename="shopping_list.txt"'
+        )
+        return response
