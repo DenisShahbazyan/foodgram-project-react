@@ -6,10 +6,12 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 
 from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
                             Subscription, Tag)
 
+from .pagination import CustomPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrIsAuthenticatedOrReadOnly
 from .serializers import (CreateUpdateDestroyRecipeSerializer,
                           IngredientSerializer, ListRetrieveRecipeSerializer,
@@ -21,6 +23,7 @@ User = get_user_model()
 
 class UserViewSet(djoser_views.UserViewSet):
     queryset = User.objects.all()
+    pagination_class = CustomPageNumberPagination
 
     @action(detail=True, methods=('post',), url_path='subscribe',
             permission_classes=(IsAuthenticated,))
@@ -69,10 +72,11 @@ class UserViewSet(djoser_views.UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = Subscription.objects.filter(user=user)
+        pagination = self.paginate_queryset(queryset)
         serializer = SubscriptionSerializer(
-            queryset, many=True, context={'request': request}
+            pagination, many=True, context={'request': request}
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -85,11 +89,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrIsAuthenticatedOrReadOnly,)
+    pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
