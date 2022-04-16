@@ -29,9 +29,6 @@ class ShoppingCart(models.Model):
                 fields=['user', 'recipe'], name='unique_cart')
         ]
 
-    # def __str__(self) -> str:
-    #     return ' / '.join(i.name for i in self.recipe.all())
-
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -55,9 +52,6 @@ class Favorite(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite')
         ]
-
-    # def __str__(self) -> str:
-    #     return ' / '.join(i.name for i in self.recipe.all())
 
 
 class Subscription(models.Model):
@@ -187,8 +181,8 @@ class AmountIngredientForRecipe(models.Model):
         ]
 
     def __str__(self) -> str:
-        return (self.recipe.name + ' | ' + self.ingredient.name + ' | ' +
-                str(self.amount) + ' | ' + self.ingredient.measurement_unit)
+        return (f'{self.recipe.name} | {self.ingredient.name} | '
+                f'{str(self.amount)} | {self.ingredient.measurement_unit}')
 
 
 class Tag(models.Model):

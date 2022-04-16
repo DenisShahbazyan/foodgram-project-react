@@ -27,8 +27,10 @@ class UserSerializer(djoser_serializers.UserSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed')
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed'
+        )
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
@@ -60,7 +62,8 @@ class AmountIngredientForRecipeSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit')
+        source='ingredient.measurement_unit'
+    )
 
     class Meta:
         model = AmountIngredientForRecipe
@@ -76,13 +79,15 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = UserSerializer(read_only=True)
     ingredients = AmountIngredientForRecipeSerializer(
-        source='amountingredientforrecipe', many=True)
+        source='amountingredientforrecipe', many=True
+    )
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time')
+        fields = (
+            'id', 'tags', 'author', 'ingredients', 'is_favorited',
+            'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time'
+        )
 
     # TODO доделать для авторизованного пользователя
     def get_is_favorited(self, obj):
@@ -146,8 +151,9 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time')
 
     def to_representation(self, instance):
-        return ListRetrieveRecipeSerializer(instance,
-                                            context=self.context).data
+        return ListRetrieveRecipeSerializer(
+            instance, context=self.context
+        ).data
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -218,8 +224,10 @@ class SubscriptionSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed', 'recipes', 'recipes_count')
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed', 'recipes', 'recipes_count'
+        )
 
     def get_is_subscribed(self, obj):
         return True
