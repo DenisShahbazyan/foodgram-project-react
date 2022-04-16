@@ -89,17 +89,18 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time'
         )
 
-    # TODO доделать для авторизованного пользователя
     def get_is_favorited(self, obj):
-        if self.context['request'].user.is_anonymous:
+        from pprint import pprint
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
-        return False
+        return obj.favorites.filter(user=user).exists()
 
-    # TODO доделать для авторизованного пользователя
     def get_is_in_shopping_cart(self, obj):
-        if self.context['request'].user.is_anonymous:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
-        return False
+        return obj.shopping_carts.filter(user=user).exists()
 
     def create(self, validated_data):
         user = self.context.get('request').user

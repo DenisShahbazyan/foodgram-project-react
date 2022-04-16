@@ -18,3 +18,8 @@ class IsAuthorOrIsAuthenticatedOrReadOnly(BasePermission):
             request.method in SAFE_METHODS
             or obj.author == request.user
         )
+
+
+class IsAuthenticatedOrReadOnlyOrIsMe(BasePermission):
+    def has_permission(self, request, view):
+        return bool(not (view.action == 'me' and request.user.is_anonymous))
