@@ -45,7 +45,7 @@ class UserViewSet(djoser_views.UserViewSet):
 
         follow = Subscription.objects.create(user=user, author=author)
         serializer = SubscriptionSerializer(
-            follow, context={'request': request}
+            follow, data=request.data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -76,7 +76,10 @@ class UserViewSet(djoser_views.UserViewSet):
         queryset = Subscription.objects.filter(user=user)
         pagination = self.paginate_queryset(queryset)
         serializer = SubscriptionSerializer(
-            pagination, many=True, context={'request': request}
+            pagination,
+            data=list(request.data),
+            many=True,
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         return self.get_paginated_response(serializer.data)
@@ -119,7 +122,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 {'errors': 'Рецепт уже добавлен'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = SimpleRecipeSerializer(recipe)
+        serializer = SimpleRecipeSerializer(recipe, data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -148,7 +151,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 {'errors': 'Рецепт уже добавлен'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = SimpleRecipeSerializer(recipe)
+        serializer = SimpleRecipeSerializer(recipe, data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
