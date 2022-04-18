@@ -14,7 +14,7 @@ class ShoppingCart(models.Model):
         verbose_name='Чей список покупок'
     )
     recipe = models.ForeignKey(
-        "Recipe",
+        'Recipe',
         on_delete=models.CASCADE,
         related_name='shopping_carts',
         verbose_name='ID рецепта'
@@ -38,7 +38,7 @@ class Favorite(models.Model):
         verbose_name='Чей список избранного'
     )
     recipe = models.ForeignKey(
-        "Recipe",
+        'Recipe',
         on_delete=models.CASCADE,
         related_name='favorites',
         verbose_name='ID рецепта'
@@ -85,7 +85,7 @@ class Subscription(models.Model):
 
 class Recipe(models.Model):
     tags = models.ManyToManyField(
-        "Tag",
+        'Tag',
         related_name='recipes',
         verbose_name='Тег'
     )
@@ -96,7 +96,7 @@ class Recipe(models.Model):
         verbose_name='Автор'
     )
     ingredients = models.ManyToManyField(
-        "Ingredient",
+        'Ingredient',
         related_name='recipes',
         verbose_name='Ингредиент'
     )

@@ -1,3 +1,4 @@
+from imp import source_from_cache
 from django.contrib.auth import get_user_model
 from djoser import serializers as djoser_serializers
 from drf_extra_fields.fields import Base64ImageField
@@ -90,7 +91,6 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        from pprint import pprint
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -101,30 +101,6 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return obj.shopping_carts.filter(user=user).exists()
-
-    def create(self, validated_data):
-        user = self.context.get('request').user
-
-        tags_data = validated_data.pop('tags')
-        tags = []
-        for id in tags_data:
-            tag = get_object_or_404(Tag, id=id)
-            tags.append(tag)
-
-        ingredients_data = validated_data.pop('ingredients')
-        ingredients = []
-        recipe = Recipe(author=user, **validated_data)
-        recipe.save()
-        for field in ingredients_data:
-            ingredient = get_object_or_404(Ingredient, id=field['id'])
-            AmountIngredientForRecipe.objects.create(
-                recipe=recipe, ingredient=ingredient, amount=field['amount']
-            )
-            ingredients.append(ingredient)
-
-        recipe.tags.add(*tags)
-        recipe.ingredients.add(*ingredients)
-        return recipe
 
 
 class AmountWriteSerializer(serializers.Serializer):
@@ -195,10 +171,13 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
 
         instance.ingredients.set(ingredients)
         instance.tags.set(validated_data.get('tags'))
-        instance.image = validated_data.get('image')
-        instance.name = validated_data.get('name')
-        instance.text = validated_data.get('text')
-        instance.cooking_time = validated_data.get('cooking_time')
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get(
+            'cooking_time',
+            instance.cooking_time
+        )
         instance.save()
         return instance
 
@@ -221,7 +200,9 @@ class SubscriptionSerializer(UserSerializer):
     last_name = serializers.ReadOnlyField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField(
+        source='get_recipes_count'
+    )
 
     class Meta:
         model = User

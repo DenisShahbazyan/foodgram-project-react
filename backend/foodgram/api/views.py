@@ -13,8 +13,7 @@ from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
 
 from .filters import CustomSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
-from .permissions import (IsAdminOrReadOnly,
-                          IsAuthorOrIsAuthenticatedOrReadOnly)
+from .permissions import IsAuthorOrIsAuthenticatedOrReadOnly
 from .serializers import (CreateUpdateDestroyRecipeSerializer,
                           IngredientSerializer, ListRetrieveRecipeSerializer,
                           SimpleRecipeSerializer, SubscriptionSerializer,
@@ -48,6 +47,7 @@ class UserViewSet(djoser_views.UserViewSet):
         serializer = SubscriptionSerializer(
             follow, context={'request': request}
         )
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
@@ -78,19 +78,18 @@ class UserViewSet(djoser_views.UserViewSet):
         serializer = SubscriptionSerializer(
             pagination, many=True, context={'request': request}
         )
+        serializer.is_valid(raise_exception=True)
         return self.get_paginated_response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsAdminOrReadOnly,)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (CustomSearchFilter,)
     search_fields = ('^name',)
 
@@ -121,6 +120,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = SimpleRecipeSerializer(recipe)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
@@ -149,6 +149,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = SimpleRecipeSerializer(recipe)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete

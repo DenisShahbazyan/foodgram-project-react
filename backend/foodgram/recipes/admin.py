@@ -4,6 +4,11 @@ from .models import (AmountIngredientForRecipe, Favorite, Ingredient, Recipe,
                      ShoppingCart, Subscription, Tag)
 
 
+class IngredientInline(admin.TabularInline):
+    model = AmountIngredientForRecipe
+    extra = 1
+
+
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'recipe')
@@ -24,10 +29,19 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author', 'name', 'image', 'text', 'cooking_time')
-    filter_horizontal = ('tags', 'ingredients')
+    fields = ('author', 'name', 'image', 'text', 'cooking_time', 'tags')
+    list_display = (
+        'id', 'author', 'name', 'image', 'text', 'cooking_time', 'get_cout'
+    )
+    filter_horizontal = ('tags',)
     list_filter = ('author', 'name')
     list_editable = ('author', 'name', 'image', 'text', 'cooking_time')
+    inlines = (IngredientInline,)
+
+    def get_cout(self, obj):
+        return obj.favorites.count()
+
+    get_cout.short_description = 'Кол-во добавления в избранное'
 
 
 @admin.register(Ingredient)
@@ -36,12 +50,6 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     list_editable = ('name', 'measurement_unit')
     search_fields = ('id', )
-
-
-@admin.register(AmountIngredientForRecipe)
-class AmountIngredientForRecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'recipe', 'ingredient', 'amount')
-    list_editable = ('recipe', 'ingredient', 'amount')
 
 
 @admin.register(Tag)
