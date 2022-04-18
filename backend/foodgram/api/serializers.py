@@ -1,4 +1,3 @@
-from imp import source_from_cache
 from django.contrib.auth import get_user_model
 from djoser import serializers as djoser_serializers
 from drf_extra_fields.fields import Base64ImageField
@@ -34,6 +33,12 @@ class UserSerializer(djoser_serializers.UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
+        """Возвращает подписан ли текущий пользователь на автора.
+
+        Returns:
+            True: Подписан.
+            False: Не подписан.
+        """
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -91,12 +96,24 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
+        """Возвращает добавлен ли рецепт в избранное.
+
+        Returns:
+            True: Рецепт есть в избранном.
+            False: Рецепта нет в избранном.
+        """
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
         return obj.favorites.filter(user=user).exists()
 
     def get_is_in_shopping_cart(self, obj):
+        """Возвращает добавлен ли рецепт в список покупок.
+
+        Returns:
+            True: Рецепт есть в списке покупок.
+            False: Рецепта нет в списке покупок.
+        """
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -212,9 +229,19 @@ class SubscriptionSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
+        """Возвращает подписан ли текущий пользователь на автора. Так как в
+        данной ситуации мы запращиваем только тех авторов, на которых подписан
+        текущий пользователь, это поле всегда будет True.
+        """
         return True
 
     def get_recipes(self, obj):
+        """Возвращет рецепты авторов при запросе авторов, на которых подписан 
+        текущий пользователь.
+
+        Params:
+            recipes_limit: сколько рецептов выодить у автора.
+        """
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         queryset = Recipe.objects.filter(author=obj.author)
@@ -223,4 +250,6 @@ class SubscriptionSerializer(UserSerializer):
         return SimpleRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
+        """Возвращает количество рецептов автора.
+        """
         return obj.author.recipes.count()

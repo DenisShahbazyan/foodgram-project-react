@@ -3,10 +3,18 @@ from django.core import validators
 from django.db import models
 from django.db.models import F, Q
 
+from .validators import hex_validator
+
 User = get_user_model()
 
 
 class ShoppingCart(models.Model):
+    """Модель 'Список покупок' пользователя.
+
+    Validators:
+        - Рецепты в списке покупок не могут повторяться. Т.е. пользователь,
+        может добавить рецепт только один раз.
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -31,6 +39,12 @@ class ShoppingCart(models.Model):
 
 
 class Favorite(models.Model):
+    """Модель 'Избранное' пользователя.
+
+    Validators:
+        - Рецепты в избранном не могут повторяться. Т.е. пользователь,
+        может добавить рецепт только один раз.
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -55,6 +69,13 @@ class Favorite(models.Model):
 
 
 class Subscription(models.Model):
+    """Модель 'Подписки' пользователя.
+
+    Validators:
+        - Пользователь не может подписаться сам на себя.
+        - Каждый пользователь может подписаться на другого пользователя только 
+        один раз.
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -84,6 +105,11 @@ class Subscription(models.Model):
 
 
 class Recipe(models.Model):
+    """Модель 'Рецепты' пользователя.
+
+    Validators:
+        - Поле cooking_time (Время приготовления) не может быть меньше 1.
+    """
     tags = models.ManyToManyField(
         'Tag',
         related_name='recipes',
@@ -128,6 +154,11 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
+    """Модель 'Ингредиенты' для рецепта.
+
+    Validators:
+        - Каждый ингредиент должен быть уникальным.
+    """
     name = models.CharField(
         verbose_name='Название ингредиента',
         max_length=200
@@ -151,6 +182,12 @@ class Ingredient(models.Model):
 
 
 class AmountIngredientForRecipe(models.Model):
+    """Модель 'Количество ингредиента для рецепта'.
+
+    Validators:
+        - В одном рецепте каждый игредиент уникальный.
+        - Поле amount (Количество ингредиента) не может быть меньше 1.
+    """
     recipe = models.ForeignKey(
         'Recipe',
         on_delete=models.CASCADE,
@@ -186,6 +223,12 @@ class AmountIngredientForRecipe(models.Model):
 
 
 class Tag(models.Model):
+    """Модель 'Теги' для рецептов.
+
+    Validators:
+        - Каждый тег должен быть уникальным.
+        - Поле color (Цвет в HEX) не пропускает некорректные HEX цвета.
+    """
     name = models.CharField(
         verbose_name='Название тега',
         max_length=200,
@@ -194,7 +237,8 @@ class Tag(models.Model):
     color = models.CharField(
         verbose_name='Цвет в HEX',
         max_length=7,
-        unique=True
+        unique=True,
+        validators=([hex_validator])
     )
     slug = models.CharField(
         verbose_name='Cлаг',
@@ -206,6 +250,11 @@ class Tag(models.Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'color', 'slug'],
+                name='unique_recipe_tag')
+        ]
 
     def __str__(self) -> str:
         return self.name

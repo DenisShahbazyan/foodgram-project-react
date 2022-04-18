@@ -3,6 +3,9 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """Модель 'Пользователи'. Поля first_name (Имя) и last_name (Фамилия) 
+    обязательны к заполнению.
+    """
     username = models.CharField(
         verbose_name='Имя пользователя',
         max_length=150,
