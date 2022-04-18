@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.http.response import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser import views as djoser_views
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -10,9 +11,10 @@ from rest_framework.response import Response
 from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
                             Subscription, Tag)
 
-from .filters import CustomSearchFilter
+from .filters import CustomSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
-from .permissions import IsAdminOrReadOnly, IsAuthorOrIsAuthenticatedOrReadOnly
+from .permissions import (IsAdminOrReadOnly,
+                          IsAuthorOrIsAuthenticatedOrReadOnly)
 from .serializers import (CreateUpdateDestroyRecipeSerializer,
                           IngredientSerializer, ListRetrieveRecipeSerializer,
                           SimpleRecipeSerializer, SubscriptionSerializer,
@@ -97,6 +99,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrIsAuthenticatedOrReadOnly,)
     pagination_class = CustomPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
