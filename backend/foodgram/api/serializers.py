@@ -42,7 +42,7 @@ class UserSerializer(djoser_serializers.UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=user, author=obj.id).exists()
+        return Subscription.objects.filter(user=user, author=obj).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -105,7 +105,7 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return obj.favorites.filter(user=user).exists()
+        return obj.favorites.exists()
 
     def get_is_in_shopping_cart(self, obj):
         """Возвращает добавлен ли рецепт в список покупок.
@@ -117,7 +117,7 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return obj.shopping_carts.filter(user=user).exists()
+        return obj.shopping_carts.exists()
 
 
 class AmountWriteSerializer(serializers.Serializer):
@@ -245,7 +245,7 @@ class SubscriptionSerializer(UserSerializer):
         """
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
-        queryset = Recipe.objects.filter(author=obj.author)
+        queryset = obj.author.recipes.all()
         if limit:
             queryset = queryset[:int(limit)]
         return SimpleRecipeSerializer(queryset, many=True).data
