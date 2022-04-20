@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from djoser import serializers as djoser_serializers
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.generics import get_object_or_404
 
 from recipes.models import (AmountIngredientForRecipe, Ingredient, Recipe,
                             Subscription, Tag)
@@ -149,54 +148,45 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
             instance, context=self.context
         ).data
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-
-        tags_data = validated_data.pop('tags')
-        tags = []
-        for id in tags_data:
-            tag = get_object_or_404(Tag, id=id)
-            tags.append(tag)
-
-        ingredients_data = validated_data.pop('ingredients')
-        ingredients = []
-        recipe = Recipe(author=user, **validated_data)
-        recipe.save()
-        for field in ingredients_data:
-            ingredient = get_object_or_404(Ingredient, id=field['id'])
+    def create_amount_ingredient_for_recipe(self, recipe, ingredients):
+        """Записывает ингредиенты вложенные в рецепт.
+        Создает объект AmountIngredientForRecipe.
+        """
+        for ingredient in ingredients:
             AmountIngredientForRecipe.objects.create(
-                recipe=recipe, ingredient=ingredient, amount=field['amount']
+                recipe=recipe,
+                ingredient_id=ingredient['id'],
+                amount=ingredient['amount'],
             )
-            ingredients.append(ingredient)
 
-        recipe.tags.add(*tags)
-        recipe.ingredients.add(*ingredients)
+    def create(self, validated_data):
+        """Создает рецепт.
+        """
+        user = self.context['request'].user
+        tags_data = validated_data.pop('tags')
+        ingredients_data = validated_data.pop('ingredients')
+
+        recipe = Recipe.objects.create(author=user, **validated_data)
+        recipe.tags.set(tags_data)
+        self.create_amount_ingredient_for_recipe(recipe, ingredients_data)
         return recipe
 
-    def update(self, instance, validated_data):
-        ingredients_data = validated_data.get("ingredients")
-        ingredients = []
-        for field in ingredients_data:
-            ingredient = get_object_or_404(Ingredient, id=field['id'])
-            AmountIngredientForRecipe.objects.filter(
-                recipe=instance
-            ).update_or_create(
-                recipe=instance, ingredient=ingredient,
-                amount=field['amount']
-            )
-            ingredients.append(ingredient)
+    def update(self, recipe, validated_data):
+        """Обновляет рецепт.
+        """
+        ingredients_data = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
 
-        instance.ingredients.set(ingredients)
-        instance.tags.set(validated_data.get('tags'))
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time
-        )
-        instance.save()
-        return instance
+        if tags:
+            recipe.tags.clear()
+            recipe.tags.set(tags)
+
+        if ingredients_data:
+            recipe.amountingredientforrecipe.all().delete()
+            self.create_amount_ingredient_for_recipe(recipe, ingredients_data)
+
+        recipe.save()
+        return super().update(recipe, validated_data)
 
 
 class SimpleRecipeSerializer(serializers.ModelSerializer):
@@ -218,8 +208,9 @@ class SubscriptionSerializer(UserSerializer):
     last_name = serializers.ReadOnlyField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField(
-        source='get_recipes_count'
+    recipes_count = serializers.ReadOnlyField(
+        source='author.recipes.count',
+        read_only=True
     )
 
     class Meta:
@@ -249,8 +240,3 @@ class SubscriptionSerializer(UserSerializer):
         if limit:
             queryset = queryset[:int(limit)]
         return SimpleRecipeSerializer(queryset, many=True).data
-
-    def get_recipes_count(self, obj):
-        """Возвращает количество рецептов автора.
-        """
-        return obj.author.recipes.count()
