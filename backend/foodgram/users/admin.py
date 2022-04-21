@@ -11,3 +11,4 @@ class UserAdmin(admin.ModelAdmin):
                      'last_name', 'email', 'is_staff')
     search_fields = ('username', 'email', 'is_staff')
     list_filter = ('email', 'username')
+    filter_horizontal = ('subscribe',)

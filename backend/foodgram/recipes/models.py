@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
-from django.db.models import F, Q
 
 from .validators import hex_validator
 
@@ -66,42 +65,6 @@ class Favorite(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite')
         ]
-
-
-class Subscription(models.Model):
-    """Модель 'Подписки' пользователя.
-
-    Validators:
-        - Пользователь не может подписаться сам на себя.
-        - Каждый пользователь может подписаться на другого пользователя только 
-        один раз.
-    """
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='followers',
-        verbose_name='подписчик'
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='followings',
-        verbose_name='автор'
-    )
-
-    class Meta:
-        verbose_name = 'подписка'
-        verbose_name_plural = 'подписки'
-        ordering = ['id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'author'], name='unique_follow'),
-            models.CheckConstraint(
-                check=~Q(user=F('author')), name='user_not_author')
-        ]
-
-    def __str__(self) -> str:
-        return f'подписчик {self.user.username}, автор {self.author.username}'
 
 
 class Recipe(models.Model):

@@ -4,7 +4,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (AmountIngredientForRecipe, Ingredient, Recipe,
-                            Subscription, Tag)
+                            Tag)
 
 User = get_user_model()
 
@@ -41,7 +41,7 @@ class UserSerializer(djoser_serializers.UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=user, author=obj).exists()
+        return obj.subscribers.exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -201,15 +201,9 @@ class SimpleRecipeSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(UserSerializer):
     """Сериализатор для работы с подписками.
     """
-    email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='author.id')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
-    is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(
-        source='author.recipes.count',
+        source='recipes.count',
         read_only=True
     )
 
@@ -219,16 +213,10 @@ class SubscriptionSerializer(UserSerializer):
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         )
-
-    def get_is_subscribed(self, obj):
-        """Возвращает подписан ли текущий пользователь на автора. Так как в
-        данной ситуации мы запращиваем только тех авторов, на которых подписан
-        текущий пользователь, это поле всегда будет True.
-        """
-        return True
+        read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
     def get_recipes(self, obj):
-        """Возвращет рецепты авторов при запросе авторов, на которых подписан 
+        """Возвращет рецепты авторов при запросе авторов, на которых подписан
         текущий пользователь.
 
         Params:
@@ -236,7 +224,7 @@ class SubscriptionSerializer(UserSerializer):
         """
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
-        queryset = obj.author.recipes.all()
+        queryset = obj.recipes.all()
         if limit:
             queryset = queryset[:int(limit)]
         return SimpleRecipeSerializer(queryset, many=True).data

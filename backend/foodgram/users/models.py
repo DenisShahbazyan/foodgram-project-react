@@ -7,25 +7,31 @@ class User(AbstractUser):
     обязательны к заполнению.
     """
     username = models.CharField(
-        verbose_name='Имя пользователя',
+        verbose_name='имя пользователя',
         max_length=150,
         unique=True
     )
     email = models.EmailField(
-        verbose_name='Почта',
+        verbose_name='почта',
         max_length=254,
         unique=True,
     )
     first_name = models.CharField(
-        verbose_name='Имя',
+        verbose_name='имя',
         max_length=150
     )
     last_name = models.CharField(
-        verbose_name='Фамилия',
+        verbose_name='фамилия',
         max_length=150
+    )
+    subscribe = models.ManyToManyField(
+        'self',
+        verbose_name='подписка',
+        related_name='subscribers',
+        symmetrical=False,
     )
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
         ordering = ['id']
