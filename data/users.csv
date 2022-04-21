@@ -1,6 +1,6 @@
-id,username,email,first_name,last_name
-100,bingobongo,bingobongo@yamdb.fake,Raya,Cherry
-101,capt_obvious,capt_obvious@yamdb.fake,Grant,Whitaker
-102,faust,faust@yamdb.fake,Carlos,Velez
-103,reviewer,reviewer@yamdb.fake,Shaeleigh,Johnston
-104,angry,angry@yamdb.fake,Len,Chan
+id,username,email,first_name,last_name,password
+100,bingobongo,bingobongo@yamdb.fake,Raya,Cherry,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+101,capt_obvious,capt_obvious@yamdb.fake,Grant,Whitaker,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+102,faust,faust@yamdb.fake,Carlos,Velez,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+103,reviewer,reviewer@yamdb.fake,Shaeleigh,Johnston,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+104,angry,angry@yamdb.fake,Len,Chan,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
