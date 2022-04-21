@@ -84,7 +84,7 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = UserSerializer(read_only=True)
     ingredients = AmountIngredientForRecipeSerializer(
-        source='amountingredientforrecipe', many=True
+        source='amountingredientforrecipes', many=True
     )
 
     class Meta:
@@ -182,7 +182,7 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
             recipe.tags.set(tags)
 
         if ingredients_data:
-            recipe.amountingredientforrecipe.all().delete()
+            recipe.amountingredientforrecipes.all().delete()
             self.create_amount_ingredient_for_recipe(recipe, ingredients_data)
 
         recipe.save()

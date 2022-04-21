@@ -19,7 +19,7 @@ class ShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='shopping_carts',
-        verbose_name='Чей список покупок'
+        verbose_name='чей список покупок'
     )
     recipe = models.ForeignKey(
         'Recipe',
@@ -29,8 +29,8 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Список покупок'
-        verbose_name_plural = 'Списки покупок'
+        verbose_name = 'список покупок'
+        verbose_name_plural = 'списки покупок'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(
@@ -49,7 +49,7 @@ class Favorite(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='favorites',
-        verbose_name='Чей список избранного'
+        verbose_name='чей список избранного'
     )
     recipe = models.ForeignKey(
         'Recipe',
@@ -59,8 +59,8 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
+        verbose_name = 'избранное'
+        verbose_name_plural = 'избранные'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(
@@ -80,18 +80,18 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='followers',
-        verbose_name='Подписчик'
+        verbose_name='подписчик'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='followings',
-        verbose_name='Автор'
+        verbose_name='автор'
     )
 
     class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(
@@ -101,7 +101,7 @@ class Subscription(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f'Подписчик {self.user.username}, Автор {self.author.username}'
+        return f'подписчик {self.user.username}, автор {self.author.username}'
 
 
 class Recipe(models.Model):
@@ -113,40 +113,40 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         'Tag',
         related_name='recipes',
-        verbose_name='Тег'
+        verbose_name='тег'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='recipes',
-        verbose_name='Автор'
+        verbose_name='автор'
     )
     ingredients = models.ManyToManyField(
         'Ingredient',
         related_name='recipes',
-        verbose_name='Ингредиент'
+        verbose_name='ингредиент'
     )
     name = models.CharField(
-        verbose_name='Название рецепта',
+        verbose_name='название рецепта',
         max_length=200
     )
     image = models.ImageField(
-        verbose_name='Картинка рецепта',
+        verbose_name='картинка рецепта',
         upload_to='media/recipes/images/'
     )
     text = models.TextField(
-        verbose_name='Текст рецепта'
+        verbose_name='текст рецепта'
     )
     cooking_time = models.IntegerField(
         validators=(
             validators.MinValueValidator(
                 1, message='Минимальное время приготовления 1 минута'),),
-        verbose_name='Время приготовления'
+        verbose_name='время приготовления'
     )
 
     class Meta:
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
+        verbose_name = 'рецепт'
+        verbose_name_plural = 'рецепты'
         ordering = ['id']
 
     def __str__(self) -> str:
@@ -160,17 +160,17 @@ class Ingredient(models.Model):
         - Каждый ингредиент должен быть уникальным.
     """
     name = models.CharField(
-        verbose_name='Название ингредиента',
+        verbose_name='название ингредиента',
         max_length=200
     )
     measurement_unit = models.CharField(
-        verbose_name='Единца измерения',
+        verbose_name='единца измерения',
         max_length=200
     )
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(
@@ -191,25 +191,25 @@ class AmountIngredientForRecipe(models.Model):
     recipe = models.ForeignKey(
         'Recipe',
         on_delete=models.CASCADE,
-        related_name='amountingredientforrecipe',
+        related_name='amountingredientforrecipes',
         verbose_name='ID рецепта'
     )
     ingredient = models.ForeignKey(
         'Ingredient',
         on_delete=models.CASCADE,
-        related_name='amountingredientforrecipe',
+        related_name='amountingredientforrecipes',
         verbose_name='ID ингредиента'
     )
     amount = models.IntegerField(
         validators=(
             validators.MinValueValidator(
                 1, message='Минимальное количество ингридиентов 1'),),
-        verbose_name='Количество ингредиента'
+        verbose_name='количество ингредиента'
     )
 
     class Meta:
-        verbose_name = 'Количество ингредиента для рецепта'
-        verbose_name_plural = 'Количество ингредиента для рецепта'
+        verbose_name = 'количество ингредиента для рецепта'
+        verbose_name_plural = 'количество ингредиента для рецепта'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(
@@ -230,25 +230,25 @@ class Tag(models.Model):
         - Поле color (Цвет в HEX) не пропускает некорректные HEX цвета.
     """
     name = models.CharField(
-        verbose_name='Название тега',
+        verbose_name='название тега',
         max_length=200,
         unique=True
     )
     color = models.CharField(
-        verbose_name='Цвет в HEX',
+        verbose_name='цвет в HEX',
         max_length=7,
         unique=True,
         validators=([hex_validator])
     )
     slug = models.CharField(
-        verbose_name='Cлаг',
+        verbose_name='слаг',
         max_length=200,
         unique=True
     )
 
     class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
         ordering = ['id']
         constraints = [
             models.UniqueConstraint(

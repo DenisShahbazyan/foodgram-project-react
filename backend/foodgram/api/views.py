@@ -173,7 +173,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         carts = ShoppingCart.objects.filter(user=request.user)
         tmp = {}
         for cart in carts:
-            items = cart.recipe.amountingredientforrecipe.all()
+            items = cart.recipe.amountingredientforrecipes.all()
             for item in items:
                 ingredient = item.ingredient.name
                 amount = item.amount
