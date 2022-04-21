@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models import (AmountIngredientForRecipe, Favorite, Ingredient, Recipe,
                      ShoppingCart, Tag)
@@ -25,12 +26,16 @@ class FavoriteAdmin(admin.ModelAdmin):
 class RecipeAdmin(admin.ModelAdmin):
     fields = ('author', 'name', 'image', 'text', 'cooking_time', 'tags')
     list_display = (
-        'id', 'author', 'name', 'image', 'text', 'cooking_time', 'get_cout'
+        'id', 'author', 'name', 'get_image', 'text', 'cooking_time', 'get_cout'
     )
+    read_only_fields = ('get_image',)
     filter_horizontal = ('tags',)
     list_filter = ('author', 'name')
-    list_editable = ('author', 'name', 'image', 'text', 'cooking_time')
+    list_editable = ('author', 'name', 'text', 'cooking_time')
     inlines = (IngredientInline,)
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
 
     def get_cout(self, obj):
         return obj.favorites.count()
