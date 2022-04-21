@@ -1,6 +1,5 @@
-from recipes.models import (Ingredient, Recipe,
-                            AmountIngredientForRecipe, Tag,
-                            Favorite, ShoppingCart)
+from recipes.models import (AmountIngredientForRecipe, Favorite, Ingredient,
+                            Recipe, ShoppingCart, Tag)
 from users.models import User
 
 csv_data_relation = (
