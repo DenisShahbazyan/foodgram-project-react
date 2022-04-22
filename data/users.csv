@@ -1,6 +1,7 @@
-id,username,email,first_name,last_name,password
-100,bingobongo,bingobongo@yamdb.fake,Raya,Cherry,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
-101,capt_obvious,capt_obvious@yamdb.fake,Grant,Whitaker,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
-102,faust,faust@yamdb.fake,Carlos,Velez,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
-103,reviewer,reviewer@yamdb.fake,Shaeleigh,Johnston,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
-104,angry,angry@yamdb.fake,Len,Chan,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+id,username,email,first_name,last_name,is_superuser,is_staff,password
+1,admin,admin@admin.ru,admin,admin,1,1,pbkdf2_sha256$320000$4lWdtYmZ8xf8EQMwehhSnB$+gXcqE3comsM9uL1ajm4hS+RCMYpmpdKCbxOiwsWvG8=
+2,bingobongo,bingobongo@yamdb.fake,Raya,Cherry,0,0,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+3,capt_obvious,capt_obvious@yamdb.fake,Grant,Whitaker,0,0,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+4,faust,faust@yamdb.fake,Carlos,Velez,0,0,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+5,reviewer,reviewer@yamdb.fake,Shaeleigh,Johnston,0,0,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
+6,angry,angry@yamdb.fake,Len,Chan,0,0,pbkdf2_sha256$320000$7BNNRoSAHQhg1GULvCH4w5$zkgiy5L6j0wUhPvst0Gmq/corGNMvT/kcPrdj3piwbo=
