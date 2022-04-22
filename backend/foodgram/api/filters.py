@@ -44,7 +44,7 @@ class RecipeFilter(filters.FilterSet):
 
         Returns:
             queryset: Для пользователей возвращает рецепты, которые
-            находятся в избранном у текущего пользователя. Для гостей 
+            находятся в избранном у текущего пользователя. Для гостей
             возвращает все рецепты.
         """
         if value and not self.request.user.is_anonymous:
@@ -52,12 +52,12 @@ class RecipeFilter(filters.FilterSet):
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
-        """Фильтр по полю is_in_shopping_cart (в списке покупок у текущего 
+        """Фильтр по полю is_in_shopping_cart (в списке покупок у текущего
         пользователя).
 
         Returns:
             queryset: Для пользователей возвращает рецепты, которые
-            находятся в списке покупок у текущего пользователя. Для гостей 
+            находятся в списке покупок у текущего пользователя. Для гостей
             возвращает все рецепты.
         """
         if value and not self.request.user.is_anonymous:

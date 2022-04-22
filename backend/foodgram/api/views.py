@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-
 from .filters import CustomSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAuthorOrIsAdminOrReadOnly
@@ -182,8 +181,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     }
                 else:
                     tmp[f'{ingredient}|{measurement_unit}']['amount'] = (
-                        tmp[f'{ingredient}|{measurement_unit}']['amount'] +
-                        amount
+                        tmp[f'{ingredient}|{measurement_unit}']['amount']
+                        + amount
                     )
 
         shopping_list = []

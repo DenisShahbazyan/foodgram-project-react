@@ -12,7 +12,7 @@ def hex_validator(value):
         ValidationError: Некорректная длина HEX строки!
         ValidationError: Некорректный символы в HEX строке!
     """
-    HEX = [
+    hex = [
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
         'e', 'f'
     ]
@@ -25,5 +25,5 @@ def hex_validator(value):
         raise ValidationError('Некорректная длина HEX строки!')
 
     for item in value:
-        if item not in HEX:
+        if item not in hex:
             raise ValidationError('Некорректный символы в HEX строке!')

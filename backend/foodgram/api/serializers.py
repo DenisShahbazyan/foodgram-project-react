@@ -120,7 +120,7 @@ class ListRetrieveRecipeSerializer(serializers.ModelSerializer):
 
 class AmountWriteSerializer(serializers.Serializer):
     """Вспомогательный сериализатор для добавления рецептов. Для добавления
-    количества конкретного ингредиента и его количества в рецепт. 
+    количества конкретного ингредиента и его количества в рецепт.
     """
     id = serializers.IntegerField()
     amount = serializers.IntegerField()

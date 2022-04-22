@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Модель 'Пользователи'. Поля first_name (Имя) и last_name (Фамилия) 
+    """Модель 'Пользователи'. Поля first_name (Имя) и last_name (Фамилия)
     обязательны к заполнению.
     """
     username = models.CharField(
