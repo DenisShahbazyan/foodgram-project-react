@@ -6,11 +6,13 @@ services:
     volumes:
       - postgres_value:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - ../backend/.env
 
   backend:
-    image: denisshahbazyan/foodgram:v1
-    # build: ../backend/foodgram/
+    image: denisshahbazyan/foodgram_backend:latest
+    # build:
+    #   context: ../backend
+    #   dockerfile: Dockerfile
     restart: always
     command: >
       bash -c "python manage.py migrate &&  python manage.py collectstatic --noinput &&  python manage.py shell -c 'from django.contrib.contenttypes.models import ContentType; ContentType.objects.all().delete()' &&  python manage.py loaddata dump.json &&  gunicorn --bind 0:8000 foodgram.wsgi"
@@ -20,12 +22,13 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - ../backend/.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: denisshahbazyan/foodgram_frontend:latest
+    # build:
+    #   context: ../frontend
+    #   dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
