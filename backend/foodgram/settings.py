@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']  # Добавить IP
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
 
