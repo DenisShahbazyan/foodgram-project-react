@@ -1,9 +1,9 @@
 ![example workflow](https://github.com/DenisShahbazyan/foodgram-project-react/actions/workflows/main.yml/badge.svg)
-### Описание: 
+# Описание: 
 
 Дипломный проект "Продвинутый помошник" курса "Python-разработчик плюс" 
 
-### Используемые технологии: 
+# Используемые технологии: 
 - Python
 - Django
 - Django REST framework
@@ -12,11 +12,11 @@
 - Postgres
 - Gunicorn
 
-### Автор: 
+# Автор: 
 
 <a href="https://github.com/DenisShahbazyan">Denis Shahbazyan</a><br>
 
-### Установка 
+# Установка 
 
 Склонируйте проект на Ваш компьютер 
 ```sh 
@@ -50,9 +50,17 @@ pip3 install -r requirements.txt
 python ./backend/foodgram/manage.py runserver
 ```
 
-### Проект в интернете:
+# Проект в интернете:
 Проект доступен по адресу http://51.250.21.130/
-### Примеры: 
+### Вход в админку:
+- Логин: admin
+- Пароль: admin
+
+### Вход на сайт:
+- Почта: admin@admin.com
+- Пароль: admin
+
+# Примеры: 
 
 Примеры запросов можно посмотреть в документации после запуска проекта: 
 Перейти в папку infra (из корня проекта)
