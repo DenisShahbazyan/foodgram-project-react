@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path='../../infra/.env')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['51.250.21.130', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['51.250.21.130', '127.0.0.1', 'localhost', 'backend']
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
 
