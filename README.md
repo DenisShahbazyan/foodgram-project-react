@@ -1,6 +1,16 @@
+![example workflow](https://github.com/DenisShahbazyan/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 ### Описание: 
 
-Проект "Продвинутый помошник" курса "Python-разработчик плюс" 
+Дипломный проект "Продвинутый помошник" курса "Python-разработчик плюс" 
+
+### Используемые технологии: 
+- Python
+- Django
+- Django REST framework
+- Nginx
+- Docker
+- Postgres
+- Gunicorn
 
 ### Автор: 
 
