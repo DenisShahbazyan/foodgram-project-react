@@ -61,6 +61,6 @@ cd infra
 ```
 Выполнить команду 
 ```sh
-docker-compose up
+docker-compose up -d
 ```
 Проект запустится на адресе http://localhost, увидеть спецификацию API вы сможете по адресу http://localhost/api/docs/

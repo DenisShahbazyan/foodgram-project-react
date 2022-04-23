@@ -37,7 +37,6 @@ class UserSerializer(djoser_serializers.UserSerializer):
             True: Подписан.
             False: Не подписан.
         """
-        from pprint import pprint
         user = self.context.get('request').user
         if user.is_anonymous or (user == obj):
             return False
