@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-IS_DOCKER = False
+IS_DOCKER = True
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
