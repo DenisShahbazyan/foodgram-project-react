@@ -85,8 +85,8 @@ jobs:
           script: |
             cd foodgram/
             sudo docker-compose stop
-            sudo docker rm den_backend_1
-            sudo docker rm den_frontend_1
+            sudo docker rm foodgram_backend_1
+            sudo docker rm foodgram_frontend_1
             sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
             sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
 
