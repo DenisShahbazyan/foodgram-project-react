@@ -10,6 +10,6 @@ csv_data_relation = (
     {'model': Recipe.tags.through, 'filename': 'recipes_tags.csv'},
     {'model': AmountIngredientForRecipe,
         'filename': 'amount_ingredient_for_recipe.csv'},
-    {'model': Favorite, 'filename': 'favorites.csv'},
-    {'model': ShoppingCart, 'filename': 'shopping_carts.csv'},
+    # {'model': Favorite, 'filename': 'favorites.csv'},
+    # {'model': ShoppingCart, 'filename': 'shopping_carts.csv'},
 )

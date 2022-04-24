@@ -4,11 +4,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+IS_DOCKER = False
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEBUG = False
+SECRET_KEY = os.getenv('SECRET_KEY') if IS_DOCKER else 'SECRET_KEY'
 
-SECRET_KEY = 'SECRET_KEY' if DEBUG else os.getenv('SECRET_KEY')
+DEBUG = True
 
 ALLOWED_HOSTS = ['51.250.21.130', '127.0.0.1', 'localhost', 'backend']
 
@@ -68,12 +70,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql' if DEBUG else os.getenv('DB_ENGINE'),
-        'NAME': 'postgres' if DEBUG else os.getenv('DB_NAME'),
-        'USER': 'postgres' if DEBUG else os.getenv('POSTGRES_USER'),
-        'PASSWORD': 'postgres' if DEBUG else os.getenv('POSTGRES_PASSWORD'),
-        'HOST': 'localhost' if DEBUG else os.getenv('DB_HOST'),
-        'PORT': '5432' if DEBUG else os.getenv('DB_PORT')
+        'ENGINE': os.getenv('DB_ENGINE') if IS_DOCKER else 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME') if IS_DOCKER else 'foodgram_postgres',
+        'USER': os.getenv('POSTGRES_USER') if IS_DOCKER else 'postgres',
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD') if IS_DOCKER else 'postgres',
+        'HOST': os.getenv('DB_HOST') if IS_DOCKER else 'localhost',
+        'PORT': os.getenv('DB_PORT') if IS_DOCKER else '5432'
     }
 }
 
