@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from djoser import serializers as djoser_serializers
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -146,6 +147,57 @@ class CreateUpdateDestroyRecipeSerializer(serializers.ModelSerializer):
         return ListRetrieveRecipeSerializer(
             instance, context=self.context
         ).data
+
+    def validate(self, data):
+        ingredients = data.get('ingredients')
+        if not ingredients:
+            raise serializers.ValidationError({
+                'ingredients': ('Выберите ингредиенты')
+            })
+
+        min_amount_ingredient = 1
+        max_amount_ingredient = 1000
+
+        unique_ingredients = []
+        for ingredients_item in ingredients:
+            ingredient = get_object_or_404(Ingredient,
+                                           id=(ingredients_item['id']))
+            if ingredient in unique_ingredients:
+                raise serializers.ValidationError('Ингредиенты должны '
+                                                  'быть уникальными')
+            unique_ingredients.append(ingredient)
+
+            if int(ingredients_item['amount']) < min_amount_ingredient:
+                raise serializers.ValidationError({
+                    'ingredients': ('Минимальное количество ингредиента '
+                                    f'{min_amount_ingredient}')
+                })
+            if int(ingredients_item['amount']) > max_amount_ingredient:
+                raise serializers.ValidationError({
+                    'ingredients': ('Максимальное количество ингредиента '
+                                    f'{max_amount_ingredient}')
+                })
+
+        cooking_time = data.get('cooking_time')
+        if not cooking_time:
+            raise serializers.ValidationError({
+                'cooking_time': ('Введите время готовки')
+            })
+
+        min_cooking_time = 1
+        max_cooking_time = 24 * 60
+
+        if int(cooking_time) < min_cooking_time:
+            raise serializers.ValidationError({
+                'cooking_time': ('Минимальное время приготовления 1 минута')
+            })
+        if int(cooking_time) > max_cooking_time:
+            raise serializers.ValidationError({
+                'cooking_time': ('Максимальное время приготовления сутки '
+                                 f'({max_cooking_time} минут))')
+            })
+
+        return data
 
     def create_amount_ingredient_for_recipe(self, recipe, ingredients):
         """Записывает ингредиенты вложенные в рецепт.
