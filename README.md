@@ -57,7 +57,7 @@ python ./backend/foodgram/manage.py runserver
 - Пароль: admin
 
 ### Вход на сайт:
-- Почта: admin@admin.com
+- Почта: admin@admin.ru
 - Пароль: admin
 
 # Примеры: 
