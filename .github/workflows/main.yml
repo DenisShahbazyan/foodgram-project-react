@@ -110,10 +110,10 @@ jobs:
           script: |
             cd foodgram/
             sudo docker-compose stop
-            sudo docker rm foodgram_backend_1
-            sudo docker rm foodgram_frontend_1
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
+            sudo docker rm -f foodgram_backend_1
+            sudo docker rm -f foodgram_frontend_1
+            sudo docker rmi -f ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
+            sudo docker rmi -f ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
 
             touch .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
