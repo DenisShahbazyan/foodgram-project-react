@@ -72,7 +72,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE') if IS_DOCKER else 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME') if IS_DOCKER else 'foodgram_postgres',
+        'NAME': os.getenv('POSTGRES_DB') if IS_DOCKER else 'foodgram_postgres',
         'USER': os.getenv('POSTGRES_USER') if IS_DOCKER else 'postgres',
         'PASSWORD': os.getenv('POSTGRES_PASSWORD') if IS_DOCKER else 'postgres',
         'HOST': os.getenv('DB_HOST') if IS_DOCKER else 'localhost',

@@ -94,7 +94,7 @@ const RecipeCreate = ({ onEdit }) => {
               return alert(non_field_errors.join(', '))
             }
             if (ingredients) {
-              return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length)[0]}`)
+              return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map[0]}`)
             }
             if (cooking_time) {
               return alert(`Время готовки: ${cooking_time[0]}`)
