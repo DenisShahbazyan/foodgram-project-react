@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # True - когда собирается в контейнерах. False - когда runserver
-IS_DOCKER = False
+IS_DOCKER = True
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
