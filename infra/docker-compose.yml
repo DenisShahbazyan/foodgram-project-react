@@ -14,10 +14,15 @@ services:
     #   context: ../backend
     #   dockerfile: Dockerfile
     restart: always
-    # command: >
-    #   bash -c "python manage.py migrate && python manage.py collectstatic --noinput &&  python manage.py shell -c 'from django.contrib.contenttypes.models import ContentType; ContentType.objects.all().delete()' &&  python manage.py loaddata dump.json &&  gunicorn --bind 0:8000 foodgram.wsgi"
-    command: >
-      bash -c "gunicorn --bind 0:8000 foodgram.wsgi"
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # python manage.py migrate
+        python manage.py collectstatic --noinput
+        # python manage.py shell -c 'from django.contrib.contenttypes.models import ContentType; ContentType.objects.all().delete()'
+        # python manage.py loaddata dump.json
+        gunicorn --bind 0:8000 foodgram.wsgi
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
