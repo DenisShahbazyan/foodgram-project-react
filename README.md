@@ -1,3 +1,4 @@
+![example workflow](https://github.com/DenisShahbazyan/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # Foodgram
 
 ### Описание:
