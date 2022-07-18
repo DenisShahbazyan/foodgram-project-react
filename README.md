@@ -99,3 +99,4 @@ docker-compose up -d
 ### Авторы:
 - backend - [Denis Shahbazyan](https://github.com/DenisShahbazyan)
 - frontend - [Yandex Praktikum](https://github.com/yandex-praktikum/foodgram-project-react)
+
