@@ -77,7 +77,7 @@ docker-compose up -d
 
 ### Системные требования:
 - [Python](https://www.python.org/) 3.10.4
-- [PostgreSQL](https://www.postgresql.org/) 14
+- [PostgreSQL](https://www.postgresql.org/) 13
 - [Pg Admin](https://www.pgadmin.org/) 4 
 - [Docker](https://www.docker.com/) 4.10.1
 - [Docker Compose](https://docs.docker.com/compose/) 3.9
@@ -93,9 +93,8 @@ docker-compose up -d
 - [djoser](https://djoser.readthedocs.io/en/latest/getting_started.html) 2.1.0
 - [python-dotenv](https://pypi.org/project/python-dotenv/) 0.20.0
 - [tqdm](https://pypi.org/project/tqdm/) 4.64.0
-
 - [gunicorn](https://pypi.org/project/gunicorn/) 20.1.0
-- [Nginx](https://nginx.org/ru/)
+- [Nginx](https://nginx.org/ru/) 1.21.6
 
 ### Авторы:
 - backend - [Denis Shahbazyan](https://github.com/DenisShahbazyan)
